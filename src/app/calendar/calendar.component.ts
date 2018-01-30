@@ -7,11 +7,11 @@ import { CalendarService } from '../shared/calendar.service';
     styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements OnInit {
-    date;
-    days;
-    month;
-    monthDesc;
-    year;
+    private date: number;
+    protected days: Array<object>;
+    private month: number;
+    protected monthDesc: string;
+    private year: number;
 
     constructor(private service: CalendarService) {}
 

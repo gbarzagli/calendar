@@ -14,8 +14,11 @@
     <tbody>
         <tr *ngFor="let week of days">
             <td *ngFor="let day of week">
-                <div [ngClass]="{'currentDay': isCurrentDate(day)}">
-                    {{day}}
+                <div [ngClass]="{
+                                    'currentDay': isCurrentDate(day.date),
+                                    'inactiveMonth': !day.active
+                                }">
+                    {{ day.date }}
                 </div>
             </td>
         </tr>

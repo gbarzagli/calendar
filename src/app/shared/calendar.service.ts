@@ -6,25 +6,25 @@ export class CalendarService {
     private static readonly MONTH_DESCRIPTIONS = [  'Janeiro',  'Fevereiro', 'Março',    'Abril',
                                                     'Maio',     'Junho',     'Julho',    'Agosto',
                                                     'Setembro', 'Outubro',   'Novembro', 'Dezembro' ];
-    private currentDate: number;
-    private currentMonth: number;
-    private currentYear: number;
 
-
-    constructor() {
-        this.currentDate = new Date().getDate();
-        this.currentMonth = new Date().getMonth();
-        this.currentYear = new Date().getFullYear();
-    }
+    constructor() {}
 
     /**
      * getDaysOfAMonthYear
      */
     public getDaysOfAMonthYear(month: number, year: number) {
         const days = [ new Array(7), new Array(7), new Array(7), new Array(7), new Array(7), new Array(7) ];
-        const firstDay = new Date(year, month, 1);
+        const previousDay = new Date(year, month, 0);
+
+        let firstDay = new Date(year, month, 1);
+        let previousDate = previousDay.getDate();
         let column = firstDay.getDay();
         let line = 0;
+
+        // Get last days from the previous month
+        for (let i = 1; i <= column; i++) {
+            days[line][column - i] = { date: previousDate--, active: false };
+        }
 
         // get the length of days in the month by getting its last day
         const length = new Date(year, month + 1, 0).getDate();
@@ -34,38 +34,36 @@ export class CalendarService {
                 line++;
             }
 
-            days[line][column] = i;
-            column++;
+            days[line][column++] = { date: i, active: true };
+        }
+
+
+        firstDay = new Date(year, month + 1, 1);
+        let day = firstDay.getDate();
+        for (let i = line; i < 6; i++) {
+            for (let j = column; j < 7; j++) {
+                days[i][j] =  { date: day++, active: false };
+            }
+            column = 0;
         }
 
         return days;
     }
 
     get date() {
-        return this.currentDate;
-    }
-
-    set date(date) {
-        this.currentDate = date;
+        return new Date().getDate();
     }
 
     get month() {
-        return this.currentMonth;
+        return new Date().getMonth();
     }
 
-    set month(month) {
-        this.currentMonth = month;
+    get year() {
+        return new Date().getFullYear();
     }
 
     public getMonthDesc(month) {
         return CalendarService.MONTH_DESCRIPTIONS[month];
     }
 
-    get year() {
-        return this.currentYear;
-    }
-
-    set year(year) {
-        this.currentYear = year;
-    }
 }
