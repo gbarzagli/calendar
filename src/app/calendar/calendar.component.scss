@@ -1,0 +1,90 @@
+@import './../../mixins.scss';
+
+header {
+    align-items: center;
+    background-color: #1976D2;
+    border-top-right-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    color: #FFFFFF;
+    @include flex-row();
+    font-size: 2vh;
+    height: 5%;
+
+    >span {
+        @include flex();
+        text-align: center;
+    }
+
+    >a {
+        align-items: center;
+        background-color: transparent;
+        border: 0;
+        color: #FFFFFF;
+        @include flex();
+        @include flex-row();
+        height: 100%;
+        justify-content: center;
+        max-width: 10%;
+        text-align: center;
+
+        &:last-child {
+            border-top-right-radius: 15px;
+        }
+
+        &:hover {
+            background-color: #0D47A1;
+            cursor: pointer;
+        }
+    }
+}
+
+table {
+    background-color: #FFFFFF;
+    border-bottom-right-radius: 15px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    @include flex-column();
+    height: 95%;
+    justify-content: center;
+    width: 100%;
+
+    >thead {
+        @include flex-row();
+        justify-content: center;
+
+        >th {
+            @include flex();
+        }
+    }
+
+    >tbody {
+        @include flex();
+        @include flex-column();
+        justify-content: center;
+
+        >tr {
+            @include flex();
+            @include flex-row();
+            justify-content: center;
+            width: 100%;
+
+            >td {
+                @include border();
+                @include flex();
+                max-width: 13.5%;
+            }
+        }
+    }
+}
+
+
+.currentDay {
+    background-color: #0D47A1;
+    border-radius: 50px;
+    color: #FFFFFF;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    width: 25px;
+}

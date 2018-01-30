@@ -1,0 +1,23 @@
+<header>
+    <a (click)="previousMonth()">
+        <i class="material-icons">keyboard_arrow_left</i>
+    </a>
+    <span>{{monthDesc}}</span>
+    <a (click)="nextMonth()">
+        <i class="material-icons">keyboard_arrow_right</i>
+    </a>
+</header>
+<table>
+    <thead>
+        <th>D</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th>
+    </thead>
+    <tbody>
+        <tr *ngFor="let week of days">
+            <td *ngFor="let day of week">
+                <div [ngClass]="{'currentDay': isCurrentDate(day)}">
+                    {{day}}
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

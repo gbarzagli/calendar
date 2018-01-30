@@ -1,0 +1,17 @@
+@mixin border() {
+    border: #F5F5F5 solid 1px;
+}
+
+@mixin flex() {
+    flex: 1 1 auto;
+}
+
+@mixin flex-column() {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin flex-row() {
+    display: flex;
+    flex-direction: row;
+}

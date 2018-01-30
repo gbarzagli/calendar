@@ -1,0 +1,13 @@
+app-events {
+    align-items: center;
+    display: flex;
+    flex: 1 1 100%;
+    flex-direction: row;
+    max-width: 20%;
+}
+
+app-calendar {
+    display: flex;
+    flex: 1 1 100%;
+    flex-direction: column;
+}
