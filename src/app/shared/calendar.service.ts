@@ -29,7 +29,7 @@ export class CalendarService {
 
         // Get last days from the previous month
         for (let i = 1; i <= column; i++) {
-            days[line][column - i] = { date: previousDate--, month: previousDay.getMonth(), active: false };
+            days[line][column - i] = { date: previousDate--, month: previousDay.getMonth(), year: year, active: false };
         }
 
         // get the length of days in the month by getting its last day
@@ -40,7 +40,7 @@ export class CalendarService {
                 line++;
             }
 
-            days[line][column++] = { date: i, month: month, active: true };
+            days[line][column++] = { date: i, month: month, year: year, active: true };
         }
 
 
@@ -48,7 +48,7 @@ export class CalendarService {
         let day = firstDay.getDate();
         for (let i = line; i < 6; i++) {
             for (let j = column; j < 7; j++) {
-                days[i][j] =  { date: day++, month: firstDay.getMonth(), active: false };
+                days[i][j] =  { date: day++, month: firstDay.getMonth(), year: year, active: false };
             }
             column = 0;
         }

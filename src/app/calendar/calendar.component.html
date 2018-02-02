@@ -9,11 +9,17 @@
 </header>
 <table>
     <thead>
-        <th>D</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th>
+        <th>D</th>
+        <th>S</th>
+        <th>T</th>
+        <th>Q</th>
+        <th>Q</th>
+        <th>S</th>
+        <th>S</th>
     </thead>
     <tbody>
         <tr *ngFor="let week of days">
-            <td *ngFor="let day of week">
+            <td *ngFor="let day of week" (click)="openModal(day)">
                 <div [ngClass]="{
                                     'currentDay': isCurrentDate(day),
                                     'inactiveMonth': day.month !== month
@@ -24,3 +30,4 @@
         </tr>
     </tbody>
 </table>
+<app-form></app-form>

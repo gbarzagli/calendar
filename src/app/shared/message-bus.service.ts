@@ -19,8 +19,7 @@ export class MessageBusService {
 
     public consume(key) {
         const object = this.messages.get(key);
-        this.messages.delete(key);
-        this.subject.next();
+        delete this.messages[key];
         return object;
     }
 }

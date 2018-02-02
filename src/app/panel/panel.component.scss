@@ -16,14 +16,15 @@ ul {
 
     li {
         padding: 3%;
+        text-align: end;
         width: 94%;
 
         .container {
             @include flex-column();
             font-size: 1.7vh;
 
-            span,
-            i {
+            i,
+            span {
                 vertical-align: middle;
             }
 
@@ -36,7 +37,7 @@ ul {
             }
         }
 
-        input[type='text'] {
+        input[type=text] {
             background-color: transparent;
             border: none;
             border-bottom: 2px solid rgba(238, 238, 238, 0.7);
@@ -50,13 +51,13 @@ ul {
 }
 
 .tooltip {
-    position: relative;
     display: inline-block;
+    position: relative;
 
     &:hover {
-        > .tooltiptext {
-            visibility: visible;
+        .tooltiptext {
             opacity: 1;
+            visibility: visible;
         }
     }
 
@@ -64,18 +65,16 @@ ul {
         background-color: #000000;
         color: #ffffff;
         font-size: 1.5vh;
-        text-align: center;
-        padding: 8px;
-
         left: 50%;
         margin-left: -60px;
         opacity: 0;
-
+        padding: 8px;
         position: absolute;
+        text-align: center;
         top: 130%;
         transition: opacity 0.3s;
         visibility: hidden;
-        width: 150px;
+        width: 135px;
         z-index: 1;
 
         .greenbox {

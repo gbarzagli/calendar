@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CalendarService } from '../shared/calendar.service';
+import { FormComponent } from '../form/form.component';
+import { MessageBusService } from '../shared/message-bus.service';
 
 @Component({
     selector: 'app-calendar',
@@ -7,16 +9,15 @@ import { CalendarService } from '../shared/calendar.service';
     styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements OnInit {
-    private date: number;
     protected days: Array<object>;
     private month: number;
     protected monthDesc: string;
     protected year: number;
+    @ViewChild(FormComponent) form: FormComponent;
 
-    constructor(private service: CalendarService) {}
+    constructor(private service: CalendarService, private messageBus: MessageBusService) {}
 
     ngOnInit() {
-        this.date = this.service.currentDate;
         this.month = this.service.currentMonth;
         this.year = this.service.currentYear;
         setInterval(this.changeMonth(), 500);
@@ -55,6 +56,11 @@ export class CalendarComponent implements OnInit {
 
         this.month--;
         this.changeMonth();
+    }
+
+    openModal(date) {
+        this.messageBus.publish(FormComponent.FORM_DATE_KEY, date);
+        this.form.showModal();
     }
 
 }

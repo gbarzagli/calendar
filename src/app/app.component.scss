@@ -1,13 +1,13 @@
+@import './../mixins.scss';
+
 app-panel {
     align-items: center;
-    display: flex;
     flex: 1 1 100%;
-    flex-direction: row;
-    max-width: 20%;
+    @include flex-row();
+    max-width: 18%;
 }
 
 app-calendar {
-    display: flex;
     flex: 1 1 100%;
-    flex-direction: column;
+    @include flex-column();
 }
