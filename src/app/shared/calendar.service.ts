@@ -4,8 +4,11 @@ import { Injectable } from '@angular/core';
 export class CalendarService {
 
     private static readonly MONTH_DESCRIPTIONS = [  'Janeiro',  'Fevereiro', 'Março',    'Abril',
-                                                    'Maio',     'Junho',     'Julho',    'Agosto',
-                                                    'Setembro', 'Outubro',   'Novembro', 'Dezembro' ];
+    'Maio',     'Junho',     'Julho',    'Agosto',
+    'Setembro', 'Outubro',   'Novembro', 'Dezembro' ];
+
+    private month: number;
+    private year: number;
 
     constructor() {}
 
@@ -13,6 +16,9 @@ export class CalendarService {
      * getDaysOfAMonthYear
      */
     public getDaysOfAMonthYear(month: number, year: number) {
+        this.month = month;
+        this.year = year;
+
         const days = [ new Array(7), new Array(7), new Array(7), new Array(7), new Array(7), new Array(7) ];
         const previousDay = new Date(year, month, 0);
 
@@ -23,7 +29,7 @@ export class CalendarService {
 
         // Get last days from the previous month
         for (let i = 1; i <= column; i++) {
-            days[line][column - i] = { date: previousDate--, active: false };
+            days[line][column - i] = { date: previousDate--, month: previousDay.getMonth(), active: false };
         }
 
         // get the length of days in the month by getting its last day
@@ -34,7 +40,7 @@ export class CalendarService {
                 line++;
             }
 
-            days[line][column++] = { date: i, active: true };
+            days[line][column++] = { date: i, month: month, active: true };
         }
 
 
@@ -42,7 +48,7 @@ export class CalendarService {
         let day = firstDay.getDate();
         for (let i = line; i < 6; i++) {
             for (let j = column; j < 7; j++) {
-                days[i][j] =  { date: day++, active: false };
+                days[i][j] =  { date: day++, month: firstDay.getMonth(), active: false };
             }
             column = 0;
         }
@@ -50,20 +56,30 @@ export class CalendarService {
         return days;
     }
 
-    get date() {
+    get selectedMonth() {
+        return this.month;
+    }
+
+    get currentDate() {
         return new Date().getDate();
     }
 
-    get month() {
+    get currentMonth() {
         return new Date().getMonth();
     }
 
-    get year() {
+    get currentYear() {
         return new Date().getFullYear();
     }
 
     public getMonthDesc(month) {
         return CalendarService.MONTH_DESCRIPTIONS[month];
+    }
+
+    public getMonthClosingPeriod(month, year) {
+        const start = new Date(year, month - 1, 21);
+        const end = new Date(year, month, 20);
+        return { start: start, end: end };
     }
 
 }

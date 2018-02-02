@@ -2,20 +2,21 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { EventsComponent } from './events/events.component';
+import { PanelComponent } from './panel/panel.component';
 import { FormComponent } from './form/form.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { CalendarService } from './shared/calendar.service';
+import { MessageBusService } from './shared/message-bus.service';
 
 @NgModule({
     declarations: [
         AppComponent,
-        EventsComponent,
+        PanelComponent,
         FormComponent,
         CalendarComponent
     ],
     imports: [BrowserModule],
-    providers: [CalendarService],
+    providers: [CalendarService, MessageBusService],
     bootstrap: [AppComponent]
 })
 export class AppModule {}

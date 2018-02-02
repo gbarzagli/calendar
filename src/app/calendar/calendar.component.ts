@@ -11,21 +11,21 @@ export class CalendarComponent implements OnInit {
     protected days: Array<object>;
     private month: number;
     protected monthDesc: string;
-    private year: number;
+    protected year: number;
 
     constructor(private service: CalendarService) {}
 
     ngOnInit() {
-        this.date = this.service.date;
-        this.month = this.service.month;
-        this.year = this.service.year;
-        this.changeMonth();
+        this.date = this.service.currentDate;
+        this.month = this.service.currentMonth;
+        this.year = this.service.currentYear;
+        setInterval(this.changeMonth(), 500);
     }
 
     isCurrentDate(day): boolean {
-        return  this.service.date     === day
-                && this.service.month === this.month
-                && this.service.year  === this.year;
+        return  this.service.currentDate     === day.date
+                && this.service.currentMonth === day.month
+                && this.service.currentYear  === this.year;
     }
 
     changeMonth() {

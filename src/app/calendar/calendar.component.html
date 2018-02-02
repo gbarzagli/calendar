@@ -2,7 +2,7 @@
     <a (click)="previousMonth()">
         <i class="material-icons">keyboard_arrow_left</i>
     </a>
-    <span>{{monthDesc}}</span>
+    <span>{{monthDesc + ' / ' + year}}</span>
     <a (click)="nextMonth()">
         <i class="material-icons">keyboard_arrow_right</i>
     </a>
@@ -15,8 +15,8 @@
         <tr *ngFor="let week of days">
             <td *ngFor="let day of week">
                 <div [ngClass]="{
-                                    'currentDay': isCurrentDate(day.date),
-                                    'inactiveMonth': !day.active
+                                    'currentDay': isCurrentDate(day),
+                                    'inactiveMonth': day.month !== month
                                 }">
                     {{ day.date }}
                 </div>
