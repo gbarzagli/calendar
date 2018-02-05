@@ -15,7 +15,7 @@ export class PanelComponent implements OnInit, OnDestroy {
     public static readonly PANEL_HOURS_KEY = 'PANEL_HOURS_KEY';
     public static readonly PANEL_MONTH_KEY = 'PANEL_MONTH_KEY';
 
-    protected closingPeriod: string;
+    protected closingPeriod: any;
     protected hours: string = '10:00';
     protected month: string;
     private subscription: Subscription;
@@ -34,9 +34,7 @@ export class PanelComponent implements OnInit, OnDestroy {
     private changeMonth(key) {
         const monthYear: any = this.messageBus.consume(key);
         this.month = this.service.getMonthDesc(monthYear.month);
-        const period = this.service.getMonthClosingPeriod(monthYear.month, monthYear.year);
-        this.closingPeriod = `(${period.start.getDate() + '/' + (period.start.getMonth() + 1)} -
-                               ${period.end.getDate()   + '/' + (period.end.getMonth() + 1)  })`;
+        this.closingPeriod = this.service.getMonthClosingPeriod(monthYear.month, monthYear.year);
     }
 
     ngOnDestroy() {

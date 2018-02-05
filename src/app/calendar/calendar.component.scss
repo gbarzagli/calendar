@@ -70,7 +70,7 @@ table {
             width: 100%;
 
             >td {
-                @include border();
+                border: #F5F5F5 solid 1px;
                 @include flex();
                 max-width: 13.5%;
 

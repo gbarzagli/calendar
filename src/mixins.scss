@@ -1,9 +1,5 @@
-@mixin border() {
-    border: #F5F5F5 solid 1px;
-}
-
 @mixin flex() {
-    flex: 1 1 auto;
+    flex: 1 1 100%;
 }
 
 @mixin flex-column() {
