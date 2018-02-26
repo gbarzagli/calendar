@@ -24,7 +24,15 @@ export class CalendarComponent implements OnInit {
     ngOnInit() {
         this.month = this.service.currentMonth;
         this.year = this.service.currentYear;
-        setInterval(this.changeMonth(), 500);
+        this.changeMonth();
+
+        setTimeout(
+            function() {
+                window.location.reload();
+            },
+            300000
+        );
+        console.log('Browser loaded at: ' + new Date());
     }
 
     isCurrentDate(day): boolean {
