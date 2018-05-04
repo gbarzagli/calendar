@@ -1,6 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { MessageBusService } from '../shared/message-bus.service';
-import { Subscription } from 'rxjs/Subscription';
+import { CalendarService } from '../shared/calendar.service';
 
 @Component({
     selector: 'app-form',
@@ -12,19 +11,39 @@ export class FormComponent implements OnInit {
     public static readonly FORM_DATE_KEY = 'FORM_DATE_KEY';
 
     @ViewChild('modal') modal: ElementRef;
+    @ViewChild('overlay') overlay: ElementRef;
     protected day: any;
 
-    constructor() {
+    constructor(private calendarService: CalendarService) {}
+
+    ngOnInit() {
     }
 
-    ngOnInit() {}
+    public onSubmit() {
+        this.calendarService.save(this.day);
+        this.closeModal();
+    }
+
+    public onCancel() {
+        this.closeModal();
+    }
 
     public showModal() {
-        this.modal.nativeElement.style.display = 'flex';
+        if (this.day) {
+            document.querySelector('.wrapper').setAttribute('style', 'display: flex');
+            document.querySelector('.overlay').setAttribute('style', 'display: flex');
+            document.querySelector('.modal').setAttribute('style', 'display: flex');
+        }
+        // this.overlay.nativeElement.style.display = 'flex';
+        // this.modal.nativeElement.style.display = 'flex';
     }
 
-    closeModal() {
-        this.modal.nativeElement.style.display = 'none';
+    public closeModal() {
+        document.querySelector('.wrapper').setAttribute('style', 'display: none');
+        document.querySelector('.overlay').setAttribute('style', 'display: none');
+        document.querySelector('.modal').setAttribute('style', 'display: none');
+        // this.overlay.nativeElement.style.display = 'none';
+        // this.modal.nativeElement.style.display = 'none';
     }
 
     public setDate(date) {

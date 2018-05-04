@@ -3,11 +3,13 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import 'mixins.scss';
 
+* {
+    font-family: 'Roboto', sans-serif;
+}
 
 html, body {
     background-color: #EEEEEE;
     @include flex-row();
-    font-family: 'Roboto', sans-serif;
     height: 100vh;
     margin: 0;
     width: 100vw;

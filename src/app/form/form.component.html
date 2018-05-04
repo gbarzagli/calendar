@@ -1,14 +1,25 @@
-<!-- Trigger/Open The Modal -->
-<div #modal class="modal">
-
-    <!-- Modal content -->
-    <div class="modal-content">
-        <span class="close" (click)="closeModal()">
-            <i class="material-icons">close</i>
-        </span>
-        <div>
-            {{day}}
+<div #wrapper class="wrapper" *ngIf="day">
+    <!-- Trigger/Open The Modal -->
+    <div #modal class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" (click)="onCancel()">
+                <i class="material-icons">close</i>
+            </span>
+            <div class="form-group">
+                <input id="starttime" type="time" maxlength="4" [(ngModel)]="day.start" />
+                <label for="starttime">Horário início</label>
+            </div>
+            <div class="form-group">
+                <input id="endtime" type="time" maxlength="4" [(ngModel)]="day.end" />
+                <label for="endtime">Horário fim</label>
+            </div>
+            <div class="modal-actions">
+                <button class="cancel" (click)="onCancel()">Cancelar</button>
+                <button class="confirm" (click)="onSubmit()">Confirmar</button>
+            </div>
         </div>
     </div>
 
+    <div #overlay class="overlay" (click)="onCancel()"></div>
 </div>
