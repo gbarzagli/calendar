@@ -24,6 +24,7 @@
                                     'currentDay': isCurrentDate(day),
                                     'inactiveMonth': day.month !== month
                                 }">
+                    <app-form [day]="day"></app-form>
                     {{ day.date }}
                 </div>
                 <ul>
@@ -38,4 +39,3 @@
         </tr>
     </tbody>
 </table>
-<app-form></app-form>

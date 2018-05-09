@@ -12,9 +12,9 @@ export class FormComponent implements OnInit {
 
     @ViewChild('modal') modal: ElementRef;
     @ViewChild('overlay') overlay: ElementRef;
-    protected day: any;
+    @Input() day: any = {};
 
-    constructor(private calendarService: CalendarService) {}
+    constructor(private calendarService: CalendarService) { }
 
     ngOnInit() {
     }
@@ -34,16 +34,12 @@ export class FormComponent implements OnInit {
             document.querySelector('.overlay').setAttribute('style', 'display: flex');
             document.querySelector('.modal').setAttribute('style', 'display: flex');
         }
-        // this.overlay.nativeElement.style.display = 'flex';
-        // this.modal.nativeElement.style.display = 'flex';
     }
 
     public closeModal() {
         document.querySelector('.wrapper').setAttribute('style', 'display: none');
         document.querySelector('.overlay').setAttribute('style', 'display: none');
         document.querySelector('.modal').setAttribute('style', 'display: none');
-        // this.overlay.nativeElement.style.display = 'none';
-        // this.modal.nativeElement.style.display = 'none';
     }
 
     public setDate(date) {

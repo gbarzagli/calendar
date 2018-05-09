@@ -88,7 +88,7 @@ export class CalendarService {
             const data: any[] = hourControl['data'];
             let years = data.filter(y => y.year === day.year);
             if (years.length === 0) {
-                data.push({ year: day.year, months: []});
+                data.push({ year: day.year, months: [] });
                 years = data.filter(y => y.year === day.year);
             }
 
@@ -102,7 +102,8 @@ export class CalendarService {
                 date.start = day.start;
                 date.end = day.end;
             } else {
-                month.set(day.date, { start: day.start, end: day.end });
+                console.log(month['days']);
+                month['days'].push({ date: day.date, start: day.start, end: day.end });
             }
         } else {
             hourControl = {
@@ -115,10 +116,8 @@ export class CalendarService {
                                 days: [
                                     {
                                         date: day.date,
-                                        data: {
-                                            start: day.start,
-                                            end: day.end
-                                        }
+                                        start: day.start,
+                                        end: day.end
                                     }
                                 ]
                             }
