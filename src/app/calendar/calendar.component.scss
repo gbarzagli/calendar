@@ -10,12 +10,12 @@ header {
     font-size: 2vh;
     height: 5%;
 
-    >span {
+    span {
         @include flex();
         text-align: center;
     }
 
-    >a {
+    a {
         align-items: center;
         background-color: transparent;
         border: 0;
@@ -50,39 +50,54 @@ table {
     table-layout: fixed;
     width: 100%;
 
-    >thead {
+    thead {
         @include flex-row();
         justify-content: center;
 
-        >th {
+        th {
             @include flex();
         }
     }
 
-    >tbody {
+    tbody {
         @include flex();
         @include flex-column();
         justify-content: center;
 
-        >tr {
+        tr {
             @include flex();
             @include flex-row();
             justify-content: center;
             width: 100%;
 
-            >td {
+            td {
                 border: rgba($color: #000000, $alpha: 0.07) solid 1px;
                 @include flex();
                 max-width: 13.5%;
 
                 ul {
                     list-style-type: none;
+                    margin: 5px 0;
+                    padding: 0;
+
+                    li {
+                        align-items: center;
+                        display: flex;
+
+                        i {
+                            margin-right: 10px;
+                        }
+                    }
                 }
             }
         }
     }
 }
 
+.day {
+    height: 30px;
+    line-height: 30px;
+}
 
 .currentDay {
     background-color: #18FFFF;
@@ -97,5 +112,3 @@ table {
 .inactiveMonth {
     color: #BDBDBD;
 }
-
-

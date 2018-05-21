@@ -12,7 +12,7 @@ export class FormComponent implements OnInit {
 
     @ViewChild('modal') modal: ElementRef;
     @ViewChild('overlay') overlay: ElementRef;
-    @Input() day: any = {};
+    day: any = {};
 
     constructor(private calendarService: CalendarService) { }
 
@@ -40,13 +40,5 @@ export class FormComponent implements OnInit {
         document.querySelector('.wrapper').setAttribute('style', 'display: none');
         document.querySelector('.overlay').setAttribute('style', 'display: none');
         document.querySelector('.modal').setAttribute('style', 'display: none');
-    }
-
-    public setDate(date) {
-        this.day = date;
-    }
-
-    public getDate() {
-        return this.day;
     }
 }

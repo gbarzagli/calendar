@@ -20,22 +20,25 @@
     <tbody>
         <tr *ngFor="let week of days">
             <td *ngFor="let day of week" (click)="openModal(day)">
-                <div [ngClass]="{
+                <div class="day" [ngClass]="{
                                     'currentDay': isCurrentDate(day),
                                     'inactiveMonth': day.month !== month
                                 }">
-                    <app-form [day]="day"></app-form>
+
                     {{ day.date }}
                 </div>
                 <ul>
-                    <li>
-
+                    <li *ngIf="day.start">
+                        <i class="material-icons">access_time</i>
+                        {{ day.start }}
                     </li>
-                    <li>
-
+                    <li *ngIf="day.end">
+                        <i class="material-icons">access_time</i>
+                        {{ day.end }}
                     </li>
                 </ul>
             </td>
         </tr>
     </tbody>
 </table>
+<app-form></app-form>

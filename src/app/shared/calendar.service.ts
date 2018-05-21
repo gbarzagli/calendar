@@ -1,4 +1,9 @@
 import { Injectable } from '@angular/core';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { FirebaseApp } from 'angularfire2';
+import { firebase } from '@firebase/app';
+import { isUndefined } from 'util';
 
 @Injectable()
 export class CalendarService {
@@ -10,7 +15,45 @@ export class CalendarService {
     private month: number;
     private year: number;
 
-    constructor() { }
+    public user;
+
+    constructor(private db: AngularFireDatabase, private afAuth: AngularFireAuth) {
+        if (isUndefined(this.user)) {
+            const email = 'gabriel.barzagli@hotmail.com'; // prompt('Email: ', 'example@email.com');
+            const password = 'j9dc5fdr'; // prompt('Password: ', 'password');
+            afAuth.auth.signInWithEmailAndPassword(email, password)
+                .then(auth => {
+                    this.user = auth.user;
+                    console.log(this.user);
+                })
+                .catch(authErr => {
+                    if (authErr.code === 'auth/user-not-found') {
+                        afAuth.auth.createUserWithEmailAndPassword(email, password)
+                            .then(auth => {
+                                this.user = auth.user;
+                            })
+                            .catch(createErr => {
+                                alert(createErr);
+                                window.location.reload();
+                            });
+                    } else {
+                        alert(authErr);
+                        window.location.reload();
+                    }
+                });
+        }
+
+        // db.list('items').snapshotChanges(['child_changed', 'child_removed', 'child_moved']).subscribe(change => {
+        //     console.log('Data changed: ', change);
+        // });
+        // db.list('items').snapshotChanges(['child_added']).subscribe(actions => {
+        //     actions.forEach(action => {
+        //         console.log(action.type);
+        //         console.log(action.key);
+        //         console.log(action.payload.val());
+        //     });
+        // });
+    }
 
     /**
      * getDaysOfAMonthYear
@@ -18,6 +61,7 @@ export class CalendarService {
     public getDaysOfAMonthYear(month: number, year: number) {
         this.month = month;
         this.year = year;
+
 
         const days = [new Array(7), new Array(7), new Array(7), new Array(7), new Array(7), new Array(7)];
         const previousDay = new Date(year, month, 0);
@@ -32,6 +76,8 @@ export class CalendarService {
             days[line][column - i] = { date: previousDate--, month: previousDay.getMonth(), year: year, active: false };
         }
 
+        const hourControl = this.getHourControl(month, year);
+
         // get the length of days in the month by getting its last day
         const length = new Date(year, month + 1, 0).getDate();
         for (let i = 1; i <= length; i++) {
@@ -40,7 +86,10 @@ export class CalendarService {
                 line++;
             }
 
-            days[line][column++] = { date: i, month: month, year: year, active: true, start: null, end: null };
+            const hours = hourControl.filter(d => d.date === i)[0];
+            const start = hours ? hours.start : null;
+            const end = hours ? hours.end : null;
+            days[line][column++] = { date: i, month: month, year: year, active: true, start: start, end: end };
         }
 
 
@@ -82,51 +131,78 @@ export class CalendarService {
         return { start: start, end: end };
     }
 
-    public save(day) {
-        let hourControl = JSON.parse(localStorage.getItem('HOUR_CONTROL'));
-        if (hourControl) {
-            const data: any[] = hourControl['data'];
-            let years = data.filter(y => y.year === day.year);
-            if (years.length === 0) {
-                data.push({ year: day.year, months: [] });
-                years = data.filter(y => y.year === day.year);
-            }
-
-            const year = years[0];
-            const months = year['months'].filter(m => m.month === day.month);
-            const month = months[0];
-
-            const days = month['days'].filter(d => d.date === day.date);
-            const date = days[0];
-            if (date) {
-                date.start = day.start;
-                date.end = day.end;
-            } else {
-                console.log(month['days']);
-                month['days'].push({ date: day.date, start: day.start, end: day.end });
-            }
-        } else {
-            hourControl = {
-                data: [
-                    {
-                        year: day.year,
-                        months: [
-                            {
-                                month: day.month,
-                                days: [
-                                    {
-                                        date: day.date,
-                                        start: day.start,
-                                        end: day.end
-                                    }
-                                ]
-                            }
-                        ]
+    public getHourControl(month, year): Array<any> {
+        let result = [];
+        if (this.user) {
+            this.db.list(`hourControl/${this.user.uid}/years`, ref => ref.orderByChild('year').equalTo(year))
+                .valueChanges().subscribe(years => {
+                    if (years.length > 0) {
+                        console.log('a')
+                        const filtered = years[0]['months'].filter(m => m.month === month);
+                        console.log('ab', filtered);
+                        if (filtered.length > 0) {
+                            console.log('ab', filtered[0].days);
+                            result = filtered[0].days;
+                        }
                     }
-                ]
-            };
+                });
         }
-        localStorage.setItem('HOUR_CONTROL', JSON.stringify(hourControl));
+
+        return result;
+        // const hourControl = JSON.parse(localStorage.getItem('HOUR_CONTROL'));
+        // const years = hourControl.data.filter(y => y.year === year)[0];
+        // const months = years.months.filter(m => m.month === month)[0];
+        // return months ? months.days : [];
+    }
+
+    public save(day) {
+        const hourControl: any = {
+            year: day.year,
+            months: [
+                {
+                    month: day.month,
+                    days: [
+                        {
+                            date: day.date,
+                            start: day.start,
+                            end: day.end
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const dbRef = this.db.list(`hourControl/${this.user.uid}/years`);
+        this.db.list(`hourControl/${this.user.uid}/years`, ref => {
+            return ref.orderByChild('year').equalTo(day.year);
+        }).snapshotChanges(['child_changed']).subscribe(years => {
+            if (years.length === 0) {
+                dbRef.push(hourControl);
+            } else {
+                const year = years[0].payload.val();
+                console.log('a', year);
+
+                let months = year['months'].filter(m => m.month === day.month);
+                if (months.length === 0) {
+                    year['months'].push({ month: day.month, days: [] });
+                    months = year['months'].filter(y => y.month === day.month);
+                }
+                const month = months[0];
+
+                const days = month['days'].filter(d => d.date === day.date);
+                const date = days[0];
+                if (date) {
+                    date.start = day.start;
+                    date.end = day.end;
+                } else {
+                    month['days'].push({ date: day.date, start: day.start, end: day.end });
+                }
+
+                dbRef.update(years[0].key, year);
+            }
+        });
+
+
     }
 
 }

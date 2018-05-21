@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnChanges, DoCheck } from '@angular/core';
 import { CalendarService } from '../shared/calendar.service';
 import { FormComponent } from '../form/form.component';
 import { PanelComponent } from '../panel/panel.component';
@@ -19,7 +19,7 @@ export class CalendarComponent implements OnInit {
     constructor(
         private service: CalendarService,
         private messageBus: MessageBusService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.month = this.service.currentMonth;
@@ -27,7 +27,7 @@ export class CalendarComponent implements OnInit {
         this.changeMonth();
 
         setTimeout(
-            function() {
+            function () {
                 window.location.reload();
             },
             300000
@@ -46,7 +46,7 @@ export class CalendarComponent implements OnInit {
     changeMonth() {
         this.monthDesc = this.service.getMonthDesc(this.month);
         this.days = this.service.getDaysOfAMonthYear(this.month, this.year);
-        this.messageBus.publish(PanelComponent.PANEL_MONTH_KEY, {month: this.month, year: this.year});
+        this.messageBus.publish(PanelComponent.PANEL_MONTH_KEY, { month: this.month, year: this.year });
     }
 
     nextMonth() {
@@ -75,7 +75,7 @@ export class CalendarComponent implements OnInit {
 
     openModal(date) {
         if (date.active === true) {
-            this.form.setDate(date);
+            this.form.day = date;
             this.form.showModal();
         }
     }
