@@ -21,9 +21,9 @@
         <tr *ngFor="let week of days">
             <td *ngFor="let day of week" (click)="openModal(day)">
                 <div class="day" [ngClass]="{
-                                    'currentDay': isCurrentDate(day),
-                                    'inactiveMonth': day.month !== month
-                                }">
+                            'currentDay': isCurrentDate(day),
+                            'inactiveMonth': day.month !== month
+                        }">
 
                     {{ day.date }}
                 </div>

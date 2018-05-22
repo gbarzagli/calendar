@@ -14,39 +14,44 @@ export class CalendarService {
         'Maio', 'Junho', 'Julho', 'Agosto',
         'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
-    private month: number;
-    private year: number;
+    private month: number = new Date().getMonth();
+    private year: number = new Date().getFullYear();
 
     public user;
     private hourControl: any[] = [];
 
     constructor(private db: AngularFireDatabase, private afAuth: AngularFireAuth) {
+
+
         if (isUndefined(this.user)) {
-            let credentials = JSON.parse(localStorage.getItem('credentials'));
-            if (!credentials) {
-                credentials = {};
+            this.user = JSON.parse(localStorage.getItem('user'));
+            if (!this.user) {
+                this.user = {};
 
-                credentials.email =  prompt('Email: ');
-                credentials.password = prompt('Password: ');
+                this.user.email = prompt('Email: ');
+                this.user.password = prompt('Password: ');
 
-                if (credentials.email == null || credentials.password == null) {
+                if (this.user.email == null || this.user.password == null) {
                     alert('Please type your e-mail or/and password.');
                     window.location.reload();
                 }
             }
 
-            afAuth.auth.signInWithEmailAndPassword(credentials.email, credentials.password)
+            afAuth.auth.signInWithEmailAndPassword(this.user.email, this.user.password)
                 .then(auth => {
-                    this.user = auth.user;
-                    localStorage.setItem('credentials', JSON.stringify({ email: credentials.email, password: credentials.password }));
+                    this.user['uid'] = auth.user.uid;
+                    localStorage.setItem('user', JSON.stringify(this.user));
+
+                    this.getDaysOfAMonthYear(this.month, this.year);
                 })
                 .catch(authErr => {
                     if (authErr.code === 'auth/user-not-found') {
-                        afAuth.auth.createUserWithEmailAndPassword(credentials.email, credentials.password)
+                        afAuth.auth.createUserWithEmailAndPassword(this.user['email'], this.user['password'])
                             .then(auth => {
-                                this.user = auth.user;
-                                localStorage.setItem('credentials',
-                                    JSON.stringify({ email: credentials.email, password: credentials.password }));
+                                this.user['uid'] = auth.user.uid;
+                                localStorage.setItem('user', JSON.stringify(this.user));
+
+                                this.getDaysOfAMonthYear(this.month, this.year);
                             })
                             .catch(createErr => {
                                 alert(createErr);
@@ -143,24 +148,17 @@ export class CalendarService {
 
     public getHourControl(month, year): Observable<any> {
         const observable = Observable.create(observer => {
-            const id = setInterval(() => {
-                if (this.user) {
-                    this.db.list(`hourControl/${this.user.uid}/years`, ref => ref.orderByChild('year').equalTo(year))
-                        .valueChanges().subscribe(years => {
-                            if (years.length > 0) {
-                                const filtered = years[0]['months'].filter(m => m.month === month);
-                                if (filtered.length > 0) {
-                                    observer.next(filtered[0].days);
-                                    return;
-                                }
-                            }
-                            observer.next();
-                        });
-                } else {
+            this.db.list(`hourControl/${this.user.uid}/years`, ref => ref.orderByChild('year').equalTo(year))
+                .valueChanges().subscribe(years => {
+                    if (years.length > 0) {
+                        const filtered = years[0]['months'].filter(m => m.month === month);
+                        if (filtered.length > 0) {
+                            observer.next(filtered[0].days);
+                            return;
+                        }
+                    }
                     observer.next();
-                }
-            }, 100);
-            return () => clearInterval(id);
+                });
         });
 
         return observable;

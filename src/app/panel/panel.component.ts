@@ -15,9 +15,9 @@ export class PanelComponent implements OnInit, OnDestroy {
     public static readonly PANEL_HOURS_KEY = 'PANEL_HOURS_KEY';
     public static readonly PANEL_MONTH_KEY = 'PANEL_MONTH_KEY';
 
-    protected closingPeriod: any;
-    protected hours: string = '10:00';
-    protected month: string;
+    public closingPeriod: any;
+    public hours: string = '10:00';
+    public month: string;
     private subscription: Subscription;
 
     constructor(private service: CalendarService, private messageBus: MessageBusService) {

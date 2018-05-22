@@ -11,11 +11,11 @@ import { Subscription } from 'rxjs/Subscription';
     styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements OnInit {
-    protected days: Array<object>;
-    protected days$: Subscription;
+    public year: number;
+    public monthDesc: string;
+    public days: Array<object>;
+    private days$: Subscription;
     private month: number;
-    protected monthDesc: string;
-    protected year: number;
     @ViewChild(FormComponent) form: FormComponent;
 
     constructor(

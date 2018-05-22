@@ -1,0 +1,15 @@
+{
+  "rules": {
+    "hourControl": {
+      "$user_id": {
+        "years": {
+          ".read": "auth != null && auth.uid == $user_id",
+          ".write": "auth.uid === $user_id",
+          ".indexOn": "year"
+        }
+      }
+    },
+    ".read": true,
+    ".write": true
+  }
+}
