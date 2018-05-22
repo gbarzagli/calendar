@@ -4,6 +4,8 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { FirebaseApp } from 'angularfire2';
 import { firebase } from '@firebase/app';
 import { isUndefined } from 'util';
+import { Observer } from 'rxjs/Observer';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class CalendarService {
@@ -16,53 +18,64 @@ export class CalendarService {
     private year: number;
 
     public user;
+    private hourControl: any[] = [];
 
     constructor(private db: AngularFireDatabase, private afAuth: AngularFireAuth) {
         if (isUndefined(this.user)) {
-            const email = 'gabriel.barzagli@hotmail.com'; // prompt('Email: ', 'example@email.com');
-            const password = 'j9dc5fdr'; // prompt('Password: ', 'password');
-            afAuth.auth.signInWithEmailAndPassword(email, password)
+            let credentials = JSON.parse(localStorage.getItem('credentials'));
+            if (!credentials) {
+                credentials = {};
+
+                credentials.email =  prompt('Email: ');
+                credentials.password = prompt('Password: ');
+
+                if (credentials.email == null || credentials.password == null) {
+                    alert('Please type your e-mail or/and password.');
+                    window.location.reload();
+                }
+            }
+
+            afAuth.auth.signInWithEmailAndPassword(credentials.email, credentials.password)
                 .then(auth => {
                     this.user = auth.user;
-                    console.log(this.user);
+                    localStorage.setItem('credentials', JSON.stringify({ email: credentials.email, password: credentials.password }));
                 })
                 .catch(authErr => {
                     if (authErr.code === 'auth/user-not-found') {
-                        afAuth.auth.createUserWithEmailAndPassword(email, password)
+                        afAuth.auth.createUserWithEmailAndPassword(credentials.email, credentials.password)
                             .then(auth => {
                                 this.user = auth.user;
+                                localStorage.setItem('credentials',
+                                    JSON.stringify({ email: credentials.email, password: credentials.password }));
                             })
                             .catch(createErr => {
                                 alert(createErr);
                                 window.location.reload();
                             });
-                    } else {
-                        alert(authErr);
-                        window.location.reload();
                     }
                 });
         }
-
-        // db.list('items').snapshotChanges(['child_changed', 'child_removed', 'child_moved']).subscribe(change => {
-        //     console.log('Data changed: ', change);
-        // });
-        // db.list('items').snapshotChanges(['child_added']).subscribe(actions => {
-        //     actions.forEach(action => {
-        //         console.log(action.type);
-        //         console.log(action.key);
-        //         console.log(action.payload.val());
-        //     });
-        // });
     }
 
     /**
      * getDaysOfAMonthYear
      */
-    public getDaysOfAMonthYear(month: number, year: number) {
+    public getDaysOfAMonthYear(month: number, year: number): Observable<any> {
         this.month = month;
         this.year = year;
 
+        const result = Observable.create(observer => {
+            const control$ = this.getHourControl(month, year).subscribe(hourControl => {
+                observer.next(this.buildMonth(month, year, hourControl));
+            });
 
+            return () => control$.unsubscribe();
+        });
+
+        return result;
+    }
+
+    private buildMonth(month: number, year: number, hourControl?) {
         const days = [new Array(7), new Array(7), new Array(7), new Array(7), new Array(7), new Array(7)];
         const previousDay = new Date(year, month, 0);
 
@@ -76,8 +89,6 @@ export class CalendarService {
             days[line][column - i] = { date: previousDate--, month: previousDay.getMonth(), year: year, active: false };
         }
 
-        const hourControl = this.getHourControl(month, year);
-
         // get the length of days in the month by getting its last day
         const length = new Date(year, month + 1, 0).getDate();
         for (let i = 1; i <= length; i++) {
@@ -86,12 +97,11 @@ export class CalendarService {
                 line++;
             }
 
-            const hours = hourControl.filter(d => d.date === i)[0];
-            const start = hours ? hours.start : null;
-            const end = hours ? hours.end : null;
+            const hours = hourControl ? hourControl.filter(d => d.date === i)[0] : undefined;
+            const start = hours ? hours.start : undefined;
+            const end = hours ? hours.end : undefined;
             days[line][column++] = { date: i, month: month, year: year, active: true, start: start, end: end };
         }
-
 
         firstDay = new Date(year, month + 1, 1);
         let day = firstDay.getDate();
@@ -131,28 +141,29 @@ export class CalendarService {
         return { start: start, end: end };
     }
 
-    public getHourControl(month, year): Array<any> {
-        let result = [];
-        if (this.user) {
-            this.db.list(`hourControl/${this.user.uid}/years`, ref => ref.orderByChild('year').equalTo(year))
-                .valueChanges().subscribe(years => {
-                    if (years.length > 0) {
-                        console.log('a')
-                        const filtered = years[0]['months'].filter(m => m.month === month);
-                        console.log('ab', filtered);
-                        if (filtered.length > 0) {
-                            console.log('ab', filtered[0].days);
-                            result = filtered[0].days;
-                        }
-                    }
-                });
-        }
+    public getHourControl(month, year): Observable<any> {
+        const observable = Observable.create(observer => {
+            const id = setInterval(() => {
+                if (this.user) {
+                    this.db.list(`hourControl/${this.user.uid}/years`, ref => ref.orderByChild('year').equalTo(year))
+                        .valueChanges().subscribe(years => {
+                            if (years.length > 0) {
+                                const filtered = years[0]['months'].filter(m => m.month === month);
+                                if (filtered.length > 0) {
+                                    observer.next(filtered[0].days);
+                                    return;
+                                }
+                            }
+                            observer.next();
+                        });
+                } else {
+                    observer.next();
+                }
+            }, 100);
+            return () => clearInterval(id);
+        });
 
-        return result;
-        // const hourControl = JSON.parse(localStorage.getItem('HOUR_CONTROL'));
-        // const years = hourControl.data.filter(y => y.year === year)[0];
-        // const months = years.months.filter(m => m.month === month)[0];
-        // return months ? months.days : [];
+        return observable;
     }
 
     public save(day) {
@@ -180,7 +191,6 @@ export class CalendarService {
                 dbRef.push(hourControl);
             } else {
                 const year = years[0].payload.val();
-                console.log('a', year);
 
                 let months = year['months'].filter(m => m.month === day.month);
                 if (months.length === 0) {

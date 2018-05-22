@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild, OnChanges, DoCheck } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CalendarService } from '../shared/calendar.service';
 import { FormComponent } from '../form/form.component';
 import { PanelComponent } from '../panel/panel.component';
 import { MessageBusService } from '../shared/message-bus.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     selector: 'app-calendar',
@@ -11,6 +12,7 @@ import { MessageBusService } from '../shared/message-bus.service';
 })
 export class CalendarComponent implements OnInit {
     protected days: Array<object>;
+    protected days$: Subscription;
     private month: number;
     protected monthDesc: string;
     protected year: number;
@@ -44,8 +46,13 @@ export class CalendarComponent implements OnInit {
     }
 
     changeMonth() {
+        if (this.days$) {
+             this.days$.unsubscribe();
+        }
         this.monthDesc = this.service.getMonthDesc(this.month);
-        this.days = this.service.getDaysOfAMonthYear(this.month, this.year);
+        this.days$ = this.service.getDaysOfAMonthYear(this.month, this.year).subscribe(next => {
+            this.days = next;
+        });
         this.messageBus.publish(PanelComponent.PANEL_MONTH_KEY, { month: this.month, year: this.year });
     }
 
