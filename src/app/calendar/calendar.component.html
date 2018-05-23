@@ -30,11 +30,11 @@
                 <ul>
                     <li *ngIf="day.start">
                         <i class="material-icons">access_time</i>
-                        {{ day.start }}
+                        <span class="hide-on-small">{{ day.start }}</span>
                     </li>
                     <li *ngIf="day.end">
-                        <i class="material-icons">access_time</i>
-                        {{ day.end }}
+                        <i class="material-icons hide-on-small">access_time</i>
+                        <span class="hide-on-small">{{ day.end }}</span>
                     </li>
                 </ul>
             </td>

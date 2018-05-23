@@ -112,3 +112,9 @@ table {
 .inactiveMonth {
     color: #BDBDBD;
 }
+
+@media only screen and (max-width: 992px) {
+    .hide-on-small {
+        display: none;
+    }
+}

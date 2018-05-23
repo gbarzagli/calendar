@@ -17,6 +17,12 @@ html, body {
     app-root {
         @include flex();
         @include flex-row();
-        margin: 5%;
+        margin: 0;
+    }
+
+    @media only screen and (min-width: 992px) {
+        app-root {
+            margin: 5%;
+        }
     }
 }
