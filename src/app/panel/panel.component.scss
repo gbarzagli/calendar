@@ -92,3 +92,11 @@ ul {
         }
     }
 }
+
+@media only screen and (max-width: 668px) and (orientation: portrait) {
+    ul {
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+}

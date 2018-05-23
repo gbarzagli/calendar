@@ -118,3 +118,17 @@ table {
         display: none;
     }
 }
+
+@media only screen and (max-width: 668px) and (orientation: portrait) {
+    header {
+        border-top-right-radius: 0;
+        a:last-child {
+            border-top-right-radius: 0;
+        }
+    }
+
+    table {
+        border-bottom-left-radius: 15px;
+    }
+
+}

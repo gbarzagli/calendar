@@ -20,8 +20,15 @@ html, body {
         margin: 0;
     }
 
+    @media only screen and (max-width: 668px) and (orientation: portrait) {
+        app-root {
+            @include flex-column();
+        }
+    }
+
     @media only screen and (min-width: 992px) {
         app-root {
+            @include flex-row();
             margin: 5%;
         }
     }

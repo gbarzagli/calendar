@@ -7,6 +7,12 @@ app-panel {
     max-width: 18%;
 }
 
+@media only screen and (max-width: 668px) and (orientation: portrait) {
+    app-panel {
+        max-width: 100%;
+    }
+}
+
 app-calendar {
     flex: 1 1 100%;
     @include flex-column();
