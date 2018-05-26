@@ -9,10 +9,17 @@ header {
     @include flex-row();
     font-size: 2vh;
     height: 5%;
+    @media only screen and (max-width: 668px) and (orientation: portrait) {
+        height: 10%;
+        border-top-right-radius: 0;
+    }
 
     span {
         @include flex();
         text-align: center;
+        @media only screen and (max-width: 668px) and (orientation: portrait) {       
+            font-size: 1.5rem;
+        }
     }
 
     a {
@@ -25,10 +32,17 @@ header {
         height: 100%;
         justify-content: center;
         max-width: 10%;
+        @media only screen and (max-width: 668px) and (orientation: portrait) {
+            max-width: 15%;
+        }
         text-align: center;
+        
 
         &:last-child {
             border-top-right-radius: 15px;
+            @media only screen and (max-width: 668px) and (orientation: portrait) {
+                border-top-right-radius: 0;
+            }
         }
 
         &:hover {
@@ -41,6 +55,9 @@ header {
 table {
     background-color: #FFFFFF;
     border-bottom-right-radius: 15px;
+    @media only screen and (max-width: 668px) and (orientation: portrait) {
+        border-bottom-left-radius: 15px;
+    }
     border-collapse: collapse;
     border-spacing: 0;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -49,6 +66,7 @@ table {
     justify-content: center;
     table-layout: fixed;
     width: 100%;
+    
 
     thead {
         @include flex-row();
@@ -91,6 +109,9 @@ table {
 
                         i {
                             margin-right: 10px;
+                            @media only screen and (max-width: 668px) and (orientation: portrait) {
+                                margin-right: 0;
+                            }
                         }
                     }
                 }
@@ -122,31 +143,5 @@ table {
 @media only screen and (max-width: 992px) {
     .hide-on-small {
         display: none;
-    }
-}
-
-@media only screen and (max-width: 668px) and (orientation: portrait) {
-    header {
-        height: 10%;
-        border-top-right-radius: 0;
-
-        span {
-            font-size: 1.5rem;
-        }
-
-        a {
-            max-width: 15%;
-
-            &:last-child {
-                border-top-right-radius: 0;
-            }
-        }
-    }
-
-    table {
-        border-bottom-left-radius: 15px;
-        tbody > tr > td > ul > li > i {
-            margin-right: 0;
-        }
     }
 }
