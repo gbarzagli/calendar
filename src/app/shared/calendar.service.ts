@@ -21,8 +21,6 @@ export class CalendarService {
     private hourControl: any[] = [];
 
     constructor(private db: AngularFireDatabase, private afAuth: AngularFireAuth) {
-
-
         if (isUndefined(this.user)) {
             this.user = JSON.parse(localStorage.getItem('user'));
             if (!this.user) {
@@ -209,8 +207,51 @@ export class CalendarService {
                 dbRef.update(years[0].key, year);
             }
         });
+    }
 
+    public getHourBalance(): Observable<number> {
+        const observable = Observable.create(observer => {
+            let balance = 0;
+            this.db.list(`hourControl/${this.user.uid}/years`, ref => {
+                return ref.orderByChild('year').equalTo(this.year);
+            }).valueChanges(['child_changed']).subscribe(next => {
+                if (next.length !== 0) {
+                    const year = next[0];
+                    const month = year['months'].filter(m => m.month === this.month)[0];
+                    balance += month['days'].reduce((value, d) => {
+                        if (d.date <= 20) {
+                            return value + this.calcBalance(d);
+                        } else {
+                            return value + 0;
+                        }
+                    }, 0);
 
+                    const prevMonth = year['months'].filter(m => m.month === (this.month - 1))[0];
+                    balance += prevMonth['days'].reduce((value, d) => {
+                        if (d.date >= 21) {
+                            return value + this.calcBalance(d);
+                        } else {
+                            return value + 0;
+                        }
+                    }, 0);
+
+                    observer.next(balance);
+                    return;
+                }
+                observer.next(0);
+            });
+        });
+
+        return observable;
+    }
+
+    private calcBalance(d: any): number {
+        const start = d.start.split(':');
+        const end = d.end.split(':');
+        const startDate = new Date(this.year, this.month, d.date, start[0], start[1]);
+        const endDate = new Date(this.year, this.month, d.date, end[0], end[1]);
+
+        return ((endDate.getTime() - startDate.getTime()) / 1000 / 60);
     }
 
 }

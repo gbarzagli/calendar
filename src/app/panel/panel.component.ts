@@ -18,10 +18,11 @@ export class PanelComponent implements OnInit, OnDestroy {
     public closingPeriod: any;
     public hours: string = '10:00';
     public month: string;
-    private subscription: Subscription;
+    private messageBus$: Subscription;
+    private hourBalance$: Subscription;
 
     constructor(private service: CalendarService, private messageBus: MessageBusService) {
-        this.subscription = this.messageBus.subscribe(next => {
+        this.messageBus$ = this.messageBus.subscribe(next => {
             if (next === PanelComponent.PANEL_MONTH_KEY) {
                 this.changeMonth(next);
             }
@@ -32,12 +33,24 @@ export class PanelComponent implements OnInit, OnDestroy {
     }
 
     private changeMonth(key) {
+        if (this.hourBalance$) {
+            this.hourBalance$.unsubscribe();
+        }
+
         const monthYear: any = this.messageBus.consume(key);
         this.month = this.service.getMonthDesc(monthYear.month);
         this.closingPeriod = this.service.getMonthClosingPeriod(monthYear.month, monthYear.year);
+
+        this.hourBalance$ = this.service.getHourBalance().subscribe(next => {
+            console.log(next)
+            const hour = next / 60;
+            const minute = (next % 60) * 60;
+
+            this.hours = `${hour}:${minute}`;
+        });
     }
 
     ngOnDestroy() {
-        this.subscription.unsubscribe();
+        this.messageBus$.unsubscribe();
     }
 }
