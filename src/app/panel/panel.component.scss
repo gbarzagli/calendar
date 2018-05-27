@@ -28,6 +28,16 @@ ul {
                 vertical-align: middle;
             }
 
+            i {
+                &.positive{
+                    color: #1de9b6;
+                }
+
+                &.negative {
+                    color: #f44336;
+                }
+            }
+
             span.hours {
                 font-size: 37px;
 

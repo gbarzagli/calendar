@@ -1,20 +1,20 @@
 <ul>
 
     <li>
-        Saldo de {{ month }} ({{ closingPeriod.start | date:'dd/MM' }} - {{ closingPeriod.end | date:'dd/MM' }}) :
+        Saldo ({{ closingPeriod.start | date:'dd/MM' }} - {{ closingPeriod.end | date:'dd/MM' }}):
     </li>
 
     <li>
         <div class="container">
             <span class="hours">
                 <div class="tooltip">
-                    <i class="material-icons">access_time</i> {{ hours }}
+                    <i class="material-icons" [ngClass]="{'positive' : !this.negative, 'negative' : this.negative}">access_time</i> {{ hours }}
                     <div class="tooltiptext">
                         <div class="greenbox">
-                            <i class="material-icons">access_time</i>Horas positivas
+                            <i class="material-icons">access_time</i> Horas positivas
                         </div>
                         <div class="redbox">
-                            <i class="material-icons">access_time</i>Horas negativas
+                            <i class="material-icons">access_time</i> Horas negativas
                         </div>
                     </div>
                 </div>

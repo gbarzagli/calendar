@@ -218,22 +218,26 @@ export class CalendarService {
                 if (next.length !== 0) {
                     const year = next[0];
                     const month = year['months'].filter(m => m.month === this.month)[0];
-                    balance += month['days'].reduce((value, d) => {
-                        if (d.date <= 20) {
-                            return value + this.calcBalance(d);
-                        } else {
-                            return value + 0;
-                        }
-                    }, 0);
+                    if (month) {
+                        balance = month['days'].reduce((value, d) => {
+                            if (d.date <= 20) {
+                                return value + this.calcBalance(d);
+                            } else {
+                                return value + 0;
+                            }
+                        }, 0);
+                    }
 
                     const prevMonth = year['months'].filter(m => m.month === (this.month - 1))[0];
-                    balance += prevMonth['days'].reduce((value, d) => {
-                        if (d.date >= 21) {
-                            return value + this.calcBalance(d);
-                        } else {
-                            return value + 0;
-                        }
-                    }, 0);
+                    if (prevMonth) {
+                        balance = prevMonth['days'].reduce((value, d) => {
+                            if (d.date >= 21) {
+                                return value + this.calcBalance(d);
+                            } else {
+                                return value + 0;
+                            }
+                        }, balance);
+                    }
 
                     observer.next(balance);
                     return;
@@ -246,12 +250,15 @@ export class CalendarService {
     }
 
     private calcBalance(d: any): number {
+        if (d.start === '' || d.end === '') {
+            return 0;
+        }
         const start = d.start.split(':');
         const end = d.end.split(':');
         const startDate = new Date(this.year, this.month, d.date, start[0], start[1]);
         const endDate = new Date(this.year, this.month, d.date, end[0], end[1]);
 
-        return ((endDate.getTime() - startDate.getTime()) / 1000 / 60);
+        return ((endDate.getTime() - startDate.getTime()) / 1000 / 60) - 480;
     }
 
 }

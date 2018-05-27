@@ -17,6 +17,7 @@ export class PanelComponent implements OnInit, OnDestroy {
 
     public closingPeriod: any;
     public hours: string = '10:00';
+    public negative: boolean = false;
     public month: string;
     private messageBus$: Subscription;
     private hourBalance$: Subscription;
@@ -42,15 +43,28 @@ export class PanelComponent implements OnInit, OnDestroy {
         this.closingPeriod = this.service.getMonthClosingPeriod(monthYear.month, monthYear.year);
 
         this.hourBalance$ = this.service.getHourBalance().subscribe(next => {
-            console.log(next)
-            const hour = next / 60;
-            const minute = (next % 60) * 60;
+            let minute = next % 60;
+            let hour = Math.floor((next / 60) - (minute / 60));
 
-            this.hours = `${hour}:${minute}`;
+            if (hour < 0 || minute < 0) {
+                this.negative = true;
+            } else {
+                this.negative = false;
+            }
+
+            hour = Math.abs(hour);
+            minute = Math.abs(minute);
+            const strHour = hour < 10 ? '0' + hour : hour;
+            const strMinute = minute < 10 ? '0' + minute : minute;
+
+            this.hours = `${strHour}:${strMinute}`;
         });
     }
 
     ngOnDestroy() {
         this.messageBus$.unsubscribe();
+        if (this.hourBalance$) {
+            this.hourBalance$.unsubscribe();
+        }
     }
 }
