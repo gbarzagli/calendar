@@ -253,12 +253,13 @@ export class CalendarService {
         if (d.start === '' || d.end === '') {
             return 0;
         }
+
         const start = d.start.split(':');
         const end = d.end.split(':');
         const startDate = new Date(this.year, this.month, d.date, start[0], start[1]);
         const endDate = new Date(this.year, this.month, d.date, end[0], end[1]);
 
-        return ((endDate.getTime() - startDate.getTime()) / 1000 / 60) - 480;
+        return ((endDate.getTime() - startDate.getTime()) / (1000 * 60)) - 564;
     }
 
 }
